@@ -62,5 +62,5 @@ document.getElementById("register-btn").addEventListener("click", function () {
     alert("Registration successful!");
 
     // Redirect to login
-    window.location.href = "login.html";
+    window.location.href = "../index.html";
 });
