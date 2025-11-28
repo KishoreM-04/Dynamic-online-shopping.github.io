@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: #f4f7fb;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 260px;
+    background: #ffffff;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-right: 1px solid #eee;
+    transition: width 0.3s;
+}
+
+.admin-sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    gap: 8px;
+}
+
+.sidebar-menu .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    gap: 14px;
+    color: #333;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.sidebar-menu .menu-item:hover {
+    background: #0d6efd1a;
+    color: #0d6efd;
+}
+
+.logout-btn {
+    width: 100%;
+    border: none;
+    background: rgb(255, 77, 77);
+    color: white;
+    padding: 12px;
+    position: absolute;
+    bottom: 20px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+/* Content area */
+.admin-content {
+    margin-left: 260px;
+    padding: 30px;
+    transition: 0.3s;
+}
+
+.admin-sidebar.collapsed + .admin-content {
+    margin-left: 70px;
+}
+
+/* Material Inputs */
+.material-input {
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #ccd3dd;
+}
