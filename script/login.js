@@ -36,10 +36,10 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
     // Admin redirect
     if (user.isAdmin) {
-        window.location.href = "../admin/dashboard.html";  
+        window.location.href = "./admin/dashboard.html";  
         return;
     }
 
     // Normal user redirect
-    window.location.href = "home.html";
+    window.location.href = "./html/home.html";
 });
