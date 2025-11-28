@@ -1,0 +1,36 @@
+body {
+    background: #f4f7fb;
+    font-family: "Inter", sans-serif;
+}
+
+.login-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    width: 400px;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+}
+
+.login-icon {
+    font-size: 48px;
+    color: #0d6efd;
+}
+
+.material-input {
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #dce1e7;
+    transition: 0.2s;
+}
+
+.material-input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+}

@@ -1,0 +1,70 @@
+body {
+    background: linear-gradient(135deg, #eef1f7, #dce3f0);
+    font-family: "Inter", sans-serif;
+}
+
+/* NAVBAR */
+.nav-link {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.nav-link:hover {
+    color: #0d6efd !important;
+}
+
+/* HERO SECTION */
+.hero {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.hero-text h1 {
+    color: #1e1e2d;
+}
+
+.hero-text p {
+    color: #2d2d3a;
+}
+
+.hero-img {
+    width: 90%;
+    border-radius: 16px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* Hero Button */
+.hero-btn {
+    background: #0d6efd;
+    color: white;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    box-shadow: 0 6px 20px rgba(13,110,253,0.4);
+    transition: 0.3s ease;
+}
+
+.hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(13,110,253,0.55);
+}
+
+/* CATEGORY CARDS */
+.category-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.category-icon {
+    font-size: 48px;
+    color: #0d6efd;
+}

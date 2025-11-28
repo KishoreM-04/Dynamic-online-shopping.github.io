@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — MyShop</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent:#0d6efd;
+      --bg:#f3f6fb;
+      --surface:#fff;
+      --muted:#6c757d;
+      --card-radius:12px;
+      --shadow-1: 0 6px 20px rgba(13,110,253,0.08);
+    }
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial;color:#222}
+    /* layout */
+    .admin-wrap{display:flex;min-height:100vh}
+    .sidebar{
+      width:260px;
+      background:linear-gradient(180deg,#ffffff, #f8fbff);
+      border-right:1px solid rgba(0,0,0,0.03);
+      transition:width .28s ease;
+      box-shadow: var(--shadow-1);
+    }
+    .sidebar.collapsed{width:72px}
+    .sidebar .brand{padding:18px 18px;border-bottom:1px solid rgba(0,0,0,0.03);display:flex;align-items:center;gap:12px}
+    .brand .material-icons{font-size:28px;color:var(--accent)}
+    .nav-list{padding:12px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:#123;background:transparent;cursor:pointer;margin-bottom:6px}
+    .nav-item:hover{background:rgba(13,110,253,0.06)}
+    .nav-item.active{background:linear-gradient(90deg, rgba(13,110,253,0.12), rgba(13,110,253,0.06));font-weight:600}
+    .nav-item .mat{font-size:20px;color:var(--accent)}
+    .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid rgba(0,0,0,0.03)}
+    .toggle-btn{background:transparent;border:0;padding:10px;border-radius:8px;cursor:pointer}
+    .content{flex:1;padding:28px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .topbar .title{font-size:20px;font-weight:700}
+    .card-m{background:var(--surface);border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    /* forms & inputs */
+    .material-input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6e9ee;background:#fff}
+    label.small{font-size:.85rem;color:var(--muted)}
+    .form-error{color:#d9534f;font-size:.9rem;display:none}
+    /* product grid */
+    .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+    .prod-card{background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,0.06);display:flex;flex-direction:column}
+    .prod-img{height:160px;object-fit:cover;width:100%}
+    .prod-body{padding:12px;flex:1;display:flex;flex-direction:column;gap:8px}
+    .prod-title{font-weight:700}
+    .prod-desc{color:var(--muted);font-size:.9rem;flex:1}
+    .prod-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border-top:1px solid #f1f3f5}
+    .btn-flat{border:0;background:transparent;padding:6px 10px;border-radius:8px;cursor:pointer}
+    .snackbar{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#111;color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:3000}
+    .mobile-hidden{display:inline-block}
+    /* responsive */
+    @media(max-width:980px){
+      .sidebar{position:fixed;z-index:1000;left:0;top:0;bottom:0;transform:translateX(-104%);transition:transform .28s ease;width:260px}
+      .sidebar.open{transform:translateX(0)}
+      .admin-wrap{flex-direction:column}
+      .mobile-hidden{display:none}
+    }
+    .small-muted{color:var(--muted);font-size:.9rem}
+    .actions .btn{border-radius:8px}
+    .search-box{max-width:420px}
+    .flex-between{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .kbd{background:#f1f3f5;padding:6px 8px;border-radius:6px;font-size:.85rem}
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar" aria-hidden="false">
+      <div class="brand">
+        <span class="material-icons">shopping_bag</span>
+        <div>
+          <div style="font-weight:700">MyShop Admin</div>
+          <div class="small-muted" style="font-size:12px">Manage products & orders</div>
+        </div>
+      </div>
+
+      <div class="nav-list">
+        <div class="nav-item active" data-view="dashboard">
+          <span class="mat material-icons">dashboard</span>
+          <span class="label">Dashboard</span>
+        </div>
+
+        <div class="nav-item" data-view="products">
+          <span class="mat material-icons">inventory_2</span>
+          <span class="label">Products</span>
+        </div>
+
+        <div class="nav-item" data-view="add-product">
+          <span class="mat material-icons">add_box</span>
+          <span class="label">Add Product</span>
+        </div>
+
+        <div class="nav-item" data-view="orders">
+          <span class="mat material-icons">receipt_long</span>
+          <span class="label">Orders</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="d-flex gap-2">
+          <button id="collapseBtn" class="toggle-btn" title="Toggle sidebar">
+            <span class="material-icons">chevron_left</span>
+          </button>
+
+          <button id="logoutAdmin" class="btn btn-outline-danger btn-sm ms-auto">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- topbar -->
+      <div class="topbar">
+        <div class="d-flex gap-3 align-items-center">
+          <button id="mobileOpen" class="toggle-btn mobile-hidden" title="Open menu"><span class="material-icons">menu</span></button>
+          <div class="title">Dashboard</div>
+          <div class="small-muted">Admin Console</div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <div class="search-box">
+            <input id="searchInput" class="material-input" placeholder="Search products by name or category">
+          </div>
+          <div class="kbd">Admin</div>
+        </div>
+      </div>
+
+      <!-- VIEWS / PAGES -->
+      <section id="views">
+
+        <!-- DASHBOARD -->
+        <div id="view-dashboard" class="view card-m">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 class="mb-0">Welcome, Admin</h3>
+              <div class="small-muted">Overview of products and orders</div>
+            </div>
+            <div class="text-end">
+              <div class="small-muted">Total products</div>
+              <div id="dash-total-products" style="font-weight:800;font-size:20px">0</div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="card-m">
+                <h6>Quick Actions</h6>
+                <div class="mt-2 d-flex flex-column gap-2">
+                  <button class="btn btn-primary" data-view="add-product">Add new product</button>
+                  <button class="btn btn-outline-secondary" data-view="products">Manage products</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <div class="card-m">
+                <h6>Recent products</h6>
+                <div id="dash-recent" class="mt-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTS LIST -->
+        <div id="view-products" class="view hidden">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Products</h4>
+            <div class="d-flex gap-2 align-items-center">
+              <button class="btn btn-outline-primary" id="refreshProducts">Refresh</button>
+              <button class="btn btn-primary" data-view="add-product">Add Product</button>
+            </div>
+          </div>
+
+          <div class="card-m">
+            <div id="productsGrid" class="prod-grid"></div>
+          </div>
+        </div>
+
+        <!-- ADD PRODUCT -->
+        <div id="view-add-product" class="view hidden">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Add New Product</h4>
+            <div class="small-muted">Create product for storefront</div>
+          </div>
+
+          <div class="card-m">
+            <form id="addProductForm" class="row g-3">
+              <div class="col-md-6">
+                <label class="small">Product Name</label>
+                <input id="ap-name" class="material-input" required>
+                <div id="err-ap-name" class="form-error">Required</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="small">Category</label>
+                <input id="ap-category" class="material-input" placeholder="Electronics / Fashion / Home" required>
+                <div id="err-ap-category" class="form-error">Required</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="small">Price (INR)</label>
+                <input id="ap-price" type="number" class="material-input" min="1" required>
+                <div id="err-ap-price" class="form-error">Enter a valid price</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="small">Image URL</label>
+                <input id="ap-image" class="material-input" placeholder="https://...">
+                <div id="err-ap-image" class="form-error">Provide a valid URL (optional)</div>
+              </div>
+
+              <div class="col-12">
+                <label class="small">Description</label>
+                <textarea id="ap-desc" rows="4" class="material-input"></textarea>
+              </div>
+
+              <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Product</button>
+                <button type="button" class="btn btn-outline-secondary" data-view="products">Cancel</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- EDIT PRODUCT -->
+        <div id="view-edit-product" class="view hidden">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Edit Product</h4>
+            <div class="small-muted">Modify product details</div>
+          </div>
+
+          <div class="card-m">
+            <form id="editProductForm" class="row g-3">
+              <input type="hidden" id="ep-id">
+              <div class="col-md-6">
+                <label class="small">Product Name</label>
+                <input id="ep-name" class="material-input" required>
+                <div id="err-ep-name" class="form-error">Required</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="small">Category</label>
+                <input id="ep-category" class="material-input" required>
+                <div id="err-ep-category" class="form-error">Required</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="small">Price (INR)</label>
+                <input id="ep-price" type="number" class="material-input" min="1" required>
+                <div id="err-ep-price" class="form-error">Enter valid price</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="small">Image URL</label>
+                <input id="ep-image" class="material-input">
+                <div id="err-ep-image" class="form-error">Provide a valid URL (optional)</div>
+              </div>
+
+              <div class="col-12">
+                <label class="small">Description</label>
+                <textarea id="ep-desc" rows="4" class="material-input"></textarea>
+              </div>
+
+              <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Update Product</button>
+                <button type="button" class="btn btn-outline-secondary" data-view="products">Cancel</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- ORDERS (placeholder) -->
+        <div id="view-orders" class="view hidden">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Orders</h4>
+            <div class="small-muted">No real orders (demo)</div>
+          </div>
+
+          <div class="card-m">
+            <p class="text-muted">Order management can be added here. For demo, cart/checkout is simulated client-side.</p>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Snackbar -->
+  <div id="snackbar" class="snackbar" role="status" aria-live="polite"></div>
+
+  <script>
+  /* ======================
+     Admin SPA logic (single file)
+     - CRUD products in localStorage
+     - Sidebar navigation (collapsible)
+     - Form validation & notifications
+     ====================== */
+
+  // Utilities
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const showSnack = (msg, t=2000) => {
+    const sb = $('#snackbar');
+    sb.textContent = msg; sb.style.display = 'block'; sb.style.opacity = '1';
+    setTimeout(()=>{ sb.style.opacity='0'; sb.style.display='none'; }, t);
+  };
+  const uid = ()=> 'p_'+Date.now().toString(36);
+
+  // Seed admin user + sample products if missing
+  function seedDefaults(){
+    const users = JSON.parse(localStorage.getItem('users')||'null');
+    if(!users){
+      const admin = { id: 'u_admin', name:'Admin', email:'admin@gmail.com', password:'admin123', isAdmin:true };
+      localStorage.setItem('users', JSON.stringify([admin]));
+    }
+    if(!localStorage.getItem('products')){
+      const sample = [
+        { id: uid(), name: "Wireless Headphones", price:2499, description:"Noise-cancelling wireless headphones.", image:"https://images.unsplash.com/photo-1518444024082-2f1d0f7e3f14?q=80&w=800&auto=format&fit=crop", category:"Electronics" },
+        { id: uid(), name: "Smartwatch Pro", price:3999, description:"Monitor health, notifications, calls.", image:"https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?q=80&w=800&auto=format&fit=crop", category:"Electronics" },
+        { id: uid(), name: "Gaming Keyboard", price:1999, description:"Mechanical RGB keyboard.", image:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800&auto=format&fit=crop", category:"Electronics" },
+        { id: uid(), name: "Running Sneakers", price:1699, description:"Comfortable everyday sneakers.", image:"https://images.unsplash.com/photo-1528701800489-20be3c05c0d8?q=80&w=800&auto=format&fit=crop", category:"Fashion" },
+        { id: uid(), name: "Ceramic Mug", price:299, description:"Minimal matte-finish coffee mug.", image:"https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?q=80&w=800&auto=format&fit=crop", category:"Home" },
+        { id: uid(), name: "Wooden Table Lamp", price:1490, description:"Warm wood lamp.", image:"https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format&fit=crop", category:"Home" }
+      ];
+      localStorage.setItem('products', JSON.stringify(sample));
+    }
+  }
+
+  seedDefaults();
+
+  // Admin protection: ensure logged in and isAdmin
+  const loggedIn = localStorage.getItem('loggedInUser');
+  if(!loggedIn){
+    // redirect to login (assume login.html in root)
+    window.location.href = '../login.html';
+  } else {
+    const users = JSON.parse(localStorage.getItem('users')||'[]');
+    const cur = users.find(u=>u.email === loggedIn);
+    if(!cur || !cur.isAdmin){
+      alert('Admin access required');
+      window.location.href = '../login.html';
+    }
+  }
+
+  // DOM references
+  const sidebar = $('#sidebar');
+  const collapseBtn = $('#collapseBtn');
+  const mobileOpen = $('#mobileOpen');
+  const logoutAdmin = $('#logoutAdmin');
+  const views = $$('#views > div.view');
+  const navItems = $$('.nav-item');
+
+  // Simple SPA navigation
+  function switchView(name){
+    // hide all
+    views.forEach(v=>v.classList.add('hidden'));
+    // remove active nav
+    navItems.forEach(n=>n.classList.remove('active'));
+    // show view
+    const view = (name==='dashboard') ? $('#view-dashboard') : $('#view-'+name);
+    if(view) view.classList.remove('hidden');
+    // mark nav
+    const nav = $(`.nav-item[data-view="${name}"]`);
+    if(nav) nav.classList.add('active');
+    // update title
+    $('.title').textContent = name.charAt(0).toUpperCase()+name.slice(1).replace('-',' ');
+    // special: refresh products if opening products
+    if(name === 'products') renderProducts();
+    if(name === 'dashboard') renderDashboard();
+  }
+
+  // Attach nav click
+  navItems.forEach(n=>{
+    n.addEventListener('click', ()=> {
+      const v = n.dataset.view;
+      // on mobile, close sidebar
+      if(window.innerWidth<=980) sidebar.classList.remove('open');
+      switchView(v);
+    });
+  });
+
+  // collapse sidebar
+  collapseBtn.addEventListener('click', ()=>{
+    sidebar.classList.toggle('collapsed');
+  });
+  // mobile open
+  mobileOpen.addEventListener('click', ()=> sidebar.classList.add('open'));
+  // logout
+  logoutAdmin.addEventListener('click', ()=> {
+    localStorage.removeItem('loggedInUser');
+    window.location.href = '../login.html';
+  });
+
+  /* =========================
+     Product CRUD
+     ========================= */
+
+  function getProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
+  function setProducts(arr){ localStorage.setItem('products', JSON.stringify(arr)); }
+
+  // Render product cards in products view
+  function renderProducts(filter=''){
+    const grid = $('#productsGrid');
+    const prods = getProducts();
+
+    // optionally filter by search input
+    const q = (filter || $('#searchInput').value||'').trim().toLowerCase();
+
+    const list = prods.filter(p=>{
+      if(!q) return true;
+      return p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q);
+    });
+
+    grid.innerHTML = '';
+    if(list.length===0){
+      grid.innerHTML = '<div class="small-muted p-4">No products found.</div>';
+      return;
+    }
+
+    list.forEach(p=>{
+      const div = document.createElement('div');
+      div.className = 'prod-card';
+      div.innerHTML = `
+        <img class="prod-img" src="${p.image || 'https://via.placeholder.com/800x600?text=No+Image'}" alt="${p.name}">
+        <div class="prod-body">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="prod-title">${p.name}</div>
+              <div class="small-muted">${p.category || 'Uncategorized'}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-weight:800;color:var(--accent)">₹${p.price}</div>
+              <div class="small-muted" style="font-size:12px">ID: ${p.id}</div>
+            </div>
+          </div>
+
+          <div class="prod-desc">${p.description || ''}</div>
+
+          <div class="prod-footer">
+            <div class="small-muted">Preview</div>
+            <div class="actions">
+              <button class="btn btn-outline-secondary btn-sm" data-action="edit" data-id="${p.id}">Edit</button>
+              <button class="btn btn-outline-danger btn-sm" data-action="delete" data-id="${p.id}">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(div);
+    });
+
+    // attach product action handlers (delegation)
+    $$('.prod-card .actions button').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if(action==='edit') openEditProduct(id);
+        if(action==='delete') removeProduct(id);
+      });
+    });
+  }
+
+  // Remove product
+  function removeProduct(id){
+    if(!confirm('Delete this product?')) return;
+    let prods = getProducts();
+    prods = prods.filter(p=>p.id !== id);
+    setProducts(prods);
+    showSnack('Product deleted');
+    renderProducts();
+    renderDashboard();
+  }
+
+  // Open edit product view and populate form
+  function openEditProduct(id){
+    const prods = getProducts();
+    const p = prods.find(x=>x.id===id);
+    if(!p) return showSnack('Product not found');
+    // fill
+    $('#ep-id').value = p.id;
+    $('#ep-name').value = p.name;
+    $('#ep-category').value = p.category || '';
+    $('#ep-price').value = p.price;
+    $('#ep-image').value = p.image || '';
+    $('#ep-desc').value = p.description || '';
+    switchView('edit-product');
+    window.scrollTo(0,0);
+  }
+
+  // Handle Add Product submit
+  $('#addProductForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    // reset errors
+    $$('.form-error').forEach(el=>el.style.display='none');
+
+    const name = $('#ap-name').value.trim();
+    const category = $('#ap-category').value.trim();
+    const price = Number($('#ap-price').value);
+    const image = $('#ap-image').value.trim();
+    const desc = $('#ap-desc').value.trim();
+
+    let ok = true;
+    if(!name){ $('#err-ap-name').style.display='block'; ok=false;}
+    if(!category){ $('#err-ap-category').style.display='block'; ok=false;}
+    if(!price || price<=0){ $('#err-ap-price').style.display='block'; ok=false;}
+    // image optional - if provided, quick URL check
+    if(image && !isValidURL(image)){ $('#err-ap-image').style.display='block'; ok=false; }
+
+    if(!ok) return;
+
+    const prods = getProducts();
+    const newP = { id: uid(), name, category, price, image: image||'https://via.placeholder.com/800x600?text=No+Image', description: desc };
+    prods.unshift(newP); // add to top
+    setProducts(prods);
+
+    // clear form
+    $('#addProductForm').reset();
+    showSnack('Product added');
+    switchView('products');
+    renderDashboard();
+  });
+
+  // Edit Product submit
+  $('#editProductForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    $$('.form-error').forEach(el=>el.style.display='none');
+
+    const id = $('#ep-id').value;
+    const name = $('#ep-name').value.trim();
+    const category = $('#ep-category').value.trim();
+    const price = Number($('#ep-price').value);
+    const image = $('#ep-image').value.trim();
+    const desc = $('#ep-desc').value.trim();
+
+    let ok = true;
+    if(!name){ $('#err-ep-name').style.display='block'; ok=false;}
+    if(!category){ $('#err-ep-category').style.display='block'; ok=false;}
+    if(!price || price<=0){ $('#err-ep-price').style.display='block'; ok=false;}
+    if(image && !isValidURL(image)){ $('#err-ep-image').style.display='block'; ok=false; }
+    if(!ok) return;
+
+    const prods = getProducts();
+    const idx = prods.findIndex(p=>p.id===id);
+    if(idx===-1) return showSnack('Product not found');
+    prods[idx] = {...prods[idx], name, category, price, image: image||prods[idx].image, description: desc};
+    setProducts(prods);
+    showSnack('Product updated');
+    switchView('products');
+    renderDashboard();
+  });
+
+  // Simple URL validation
+  function isValidURL(s){
+    try{ const u = new URL(s); return /^https?:/.test(u.protocol); }catch(e){ return false; }
+  }
+
+  // Search handler
+  $('#searchInput').addEventListener('input', ()=> renderProducts($('#searchInput').value));
+
+  // Refresh
+  $('#refreshProducts').addEventListener('click', ()=> renderProducts());
+
+  // Dashboard render
+  function renderDashboard(){
+    const prods = getProducts();
+    $('#dash-total-products').textContent = prods.length;
+    const recent = prods.slice(0,4);
+    const container = $('#dash-recent');
+    container.innerHTML = recent.map(p=>`<div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+      <img src="${p.image}" style="width:64px;height:44px;object-fit:cover;border-radius:8px">
+      <div>
+        <div style="font-weight:700">${p.name}</div>
+        <div class="small-muted">${p.category} • ₹${p.price}</div>
+      </div>
+    </div>`).join('') || '<div class="small-muted">No products yet.</div>';
+  }
+
+  // init: start at products view
+  switchView('products');
+
+  // initial render
+  renderProducts();
+  renderDashboard();
+
+  // Expose edit/remove to global (so inline handlers can call them if needed)
+  window.openEditProduct = openEditProduct;
+  window.removeProduct = removeProduct;
+
+  // Convenience: keyboard shortcut "n" => add-product
+  document.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='n'){ switchView('add-product'); }});
+
+  </script>
+</body>
+</html>

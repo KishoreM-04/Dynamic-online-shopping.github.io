@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minimal Shop — Demo</title>
+  <link href="./css/Shop-style.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <!-- Snackbar -->
+  <div id="snackbar" class="snackbar"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="#" data-route="home"><span class="material-icons">shopping_bag</span> Minimal Shop</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" data-route="home" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" data-route="shop" href="#">Shop</a></li>
+          <li class="nav-item" id="nav-addproduct"><a class="nav-link" data-route="add-product" href="#">Add Product</a></li>
+          <li class="nav-item"><a class="nav-link" data-route="cart" href="#">Cart <span id="cart-count" class="badge bg-primary ms-1">0</span></a></li>
+          <li class="nav-item" id="nav-username"><a class="nav-link" data-route="profile"></a></li>
+          <li class="nav-item" id="nav-login"><a class="nav-link" data-route="login" href="#">Login</a></li>
+          <li class="nav-item"><button id="logoutBtn" class="btn btn-outline-secondary btn-sm hidden ms-2">Logout</button></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mb-5">
+    <!-- HOME -->
+    <section id="page-home" class="page"></section>
+
+    <!-- LOGIN -->
+    <section id="page-login" class="page hidden"></section>
+
+    <!-- REGISTER -->
+    <section id="page-register" class="page hidden"></section>
+
+    <!-- SHOP -->
+    <section id="page-shop" class="page hidden"></section>
+
+    <!-- ADD PRODUCT -->
+    <section id="page-add-product" class="page hidden"></section>
+
+    <!-- CART -->
+    <section id="page-cart" class="page hidden"></section>
+
+    <!-- PROFILE -->
+    <section id="page-profile" class="page hidden"></section>
+  </main>
+
+  <button id="fab" class="fab hidden"><span class="material-icons">add</span></button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./script/Shop-script.js"></script>
+</body>
+</html>

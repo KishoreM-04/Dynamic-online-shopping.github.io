@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MyShop</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/checkout.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm py-2">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2">
+                <span class="material-icons text-primary">shopping_bag</span> MyShop
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div id="navMenu" class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cart.html">Cart</a></li>
+                    <li class="nav-item">
+                        <button id="logoutBtn" class="btn btn-danger btn-sm ms-3 px-3">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CHECKOUT SECTION -->
+    <div class="container mt-5 mb-5">
+        <h2 class="fw-bold mb-4">Checkout</h2>
+
+        <div class="row g-4">
+
+            <!-- SHIPPING FORM -->
+            <div class="col-lg-7">
+                <div class="checkout-box p-4">
+
+                    <h4 class="fw-bold mb-3">Shipping Information</h4>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="fullName" class="form-control input-field">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" class="form-control input-field">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control input-field">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <textarea id="address" rows="3" class="form-control input-field"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">City</label>
+                            <input type="text" id="city" class="form-control input-field">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Pincode</label>
+                            <input type="text" id="pincode" class="form-control input-field">
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ORDER SUMMARY -->
+            <div class="col-lg-5">
+                <div class="summary-box p-4">
+
+                    <h4 class="fw-bold mb-3">Order Summary</h4>
+
+                    <div id="orderItems"></div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold">Total Amount</span>
+                        <span class="fw-bold" id="totalAmount">₹0</span>
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-3" id="placeOrderBtn">Place Order</button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../script/checkout.js"></script>
+</body>
+</html>

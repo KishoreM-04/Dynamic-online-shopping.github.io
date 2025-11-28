@@ -1,0 +1,39 @@
+body {
+    background: #f5f7fa;
+    font-family: "Inter", sans-serif;
+}
+
+.reg-card {
+    background: #fff;
+    width: 100%;
+    max-width: 430px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.1);
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    background: #fff;
+}
+
+.input-field:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 2px rgba(13,110,253,0.2);
+}
+
+.reg-btn {
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.error-text {
+    color: #d9534f;
+    font-size: 0.85rem;
+}
+
+.d-none {
+    display: none;
+}
